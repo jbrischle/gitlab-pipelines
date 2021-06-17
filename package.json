@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open",
-    "build": "ng build",
+    "build": "ng build --prod --baseHref=https://jbrischle.github.io/gitlab-pipelines/",
     "test": "ng test",
     "lint": "ng lint"
   },

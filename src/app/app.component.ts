@@ -23,9 +23,9 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        let gitlabApiKey = localStorage.getItem('gitlabApiKey');
-        let gitlabUrl = localStorage.getItem('gitlabUrl');
-        let groupId = localStorage.getItem('groupId');
+        const gitlabApiKey = localStorage.getItem('gitlabApiKey');
+        const gitlabUrl = localStorage.getItem('gitlabUrl');
+        const groupId = localStorage.getItem('groupId');
         if (gitlabApiKey) {
             this.gitlabApiKey = gitlabApiKey;
         }
@@ -41,24 +41,10 @@ export class AppComponent implements OnInit {
         }
     }
 
-    gatherAllProjects(page: string = '1'): void {
-        this.gitlab.getProjectsByUser(this.gitlabUrl, this.gitlabApiKey, page).subscribe(value => {
-            this.projects = [...this.projects, ...value.body];
-            let nextPage = value.headers.get('X-Next-Page');
-            if (nextPage) {
-                this.gatherAllProjects(nextPage);
-            }
-            this.loadedItems = this.projects.length;
-            this.totalNumberOfItems = (value.headers.get('x-total'));
-            this.pageCurrent = (value.headers.get('x-page'));
-            this.pageTotal = (value.headers.get('x-total-pages'));
-        });
-    }
-
     gatherGroupProjects(page: string = '1'): void {
         this.gitlab.getProjectsByGroup(this.gitlabUrl, this.gitlabApiKey, this.groupId, page).subscribe(value => {
             this.projects = [...this.projects, ...value.body];
-            let nextPage = value.headers.get('X-Next-Page');
+            const nextPage = value.headers.get('X-Next-Page');
             if (nextPage) {
                 this.gatherGroupProjects(nextPage);
             }
@@ -67,7 +53,7 @@ export class AppComponent implements OnInit {
             this.pageCurrent = (value.headers.get('x-page'));
             this.pageTotal = (value.headers.get('x-total-pages'));
 
-            value.body.forEach((value: { id: string; }) => this.gatherRunningPipelines(value.id));
+            value.body.forEach((project: { id: string; }) => this.gatherRunningPipelines(project.id));
         });
     }
 
@@ -78,7 +64,7 @@ export class AppComponent implements OnInit {
     }
 
 
-    getLoadData() {
+    getLoadData(): void {
         this.projects = [];
         this.pipelines = [];
         this.totalNumberOfItems = 0;

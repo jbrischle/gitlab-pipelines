@@ -7,30 +7,21 @@ import {Observable} from 'rxjs';
             })
 export class GitlabService {
 
-
     constructor(private readonly http: HttpClient) {
     }
 
-    public getProjectsByUser(backendUrl: string = '', apiKey: string = '', page: string): Observable<any> {
-        let headers: HttpHeaders = new HttpHeaders().set('PRIVATE-TOKEN', apiKey);
-        return this.http.get<any>(backendUrl + `projects?per_page=100&page=` + page, {
-            headers: headers,
-            observe: 'response'
-        });
-    }
-
     public getProjectsByGroup(backendUrl: string = '', apiKey: string = '', groupId: string = '', page: string): Observable<any> {
-        let headers: HttpHeaders = new HttpHeaders().set('PRIVATE-TOKEN', apiKey);
+        const headers: HttpHeaders = new HttpHeaders().set('PRIVATE-TOKEN', apiKey);
         return this.http.get<any>(backendUrl + `groups/` + groupId + `/projects?include_subgroups=true&per_page=100&page=` + page, {
-            headers: headers,
+            headers,
             observe: 'response'
         });
     }
 
     public getRunningPipelinesOfProject(backendUrl: string = '', apiKey: string = '', projectId: string = ''): Observable<any> {
-        let headers: HttpHeaders = new HttpHeaders().set('PRIVATE-TOKEN', apiKey);
+        const headers: HttpHeaders = new HttpHeaders().set('PRIVATE-TOKEN', apiKey);
         return this.http.get<any>(backendUrl + `projects/` + projectId + `/pipelines?status=running`, {
-            headers: headers,
+            headers,
             observe: 'response'
         });
     }

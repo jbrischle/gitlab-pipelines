@@ -1,5 +1,5 @@
 {
-  "$schema": "gitlab-pipelines/node_modules/@angular/cli/lib/config/schema.json",
+  "$schema": "node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -7,10 +7,12 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "name": ""
         },
         "@schematics/angular:application": {
-          "strict": true
+          "strict": true,
+          "name": ""
         }
       },
       "root": "",
@@ -31,7 +33,6 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -62,7 +63,11 @@
                   "maximumWarning": "2kb",
                   "maximumError": "4kb"
                 }
-              ]
+              ],
+              "outputPath": "",
+              "main": "",
+              "tsConfig": "",
+              "index": ""
             }
           }
         },
@@ -106,24 +111,11 @@
           "options": {
             "tsConfig": [
               "tsconfig.app.json",
-              "tsconfig.spec.json",
-              "e2e/tsconfig.json"
+              "tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
             ]
-          }
-        },
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "gitlab-pipelines:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "gitlab-pipelines:serve:production"
-            }
           }
         }
       }

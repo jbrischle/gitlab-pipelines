@@ -39,14 +39,25 @@
             <td mat-cell *matCellDef="let element"> {{element.status}} </td>
         </ng-container>
 
+        <ng-container matColumnDef="ref">
+            <th mat-header-cell *matHeaderCellDef> Ref</th>
+            <td mat-cell *matCellDef="let element"> {{element.ref}} </td>
+        </ng-container>
+
         <ng-container matColumnDef="created_at">
             <th mat-header-cell *matHeaderCellDef> Created at</th>
-            <td mat-cell *matCellDef="let element"> {{element.created_at | date:'medium'}}  </td>
+            <td mat-cell *matCellDef="let element"> {{element.created_at | date:'short'}}  </td>
         </ng-container>
 
         <ng-container matColumnDef="updated_at">
             <th mat-header-cell *matHeaderCellDef> Updated at</th>
-            <td mat-cell *matCellDef="let element"> {{element.updated_at | date:'medium'}} </td>
+            <td mat-cell *matCellDef="let element"> {{element.updated_at | date:'short'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="runtime">
+            <th mat-header-cell *matHeaderCellDef> Run time (min)</th>
+            <td mat-cell *matCellDef="let element"> {{calcRuntime(element.updated_at, element.created_at) | number:
+                '1.0-3'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="web_url">

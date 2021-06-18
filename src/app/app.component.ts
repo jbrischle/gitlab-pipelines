@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
     gitlabApiKey: string | undefined;
     gitlabUrl: string | undefined;
     groupId: string | undefined;
-    displayedColumns: string[] = ['status', 'created_at', 'updated_at', 'web_url'];
+    displayedColumns: string[] = ['status', 'ref', 'created_at', 'updated_at', 'runtime', 'web_url'];
 
     constructor(private readonly gitlab: GitlabService) {
     }
@@ -57,12 +57,19 @@ export class AppComponent implements OnInit {
         });
     }
 
-    gatherRunningPipelines(projectId: string): void {
-        this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId).subscribe(value => {
-            this.pipelines = [...this.pipelines, ...value.body];
+    gatherRunningPipelines(projectId: string, page: string = '1'): void {
+        this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId, page).subscribe(value => {
+            const filter = value.body.filter(
+                (pipeline: { status: string; }) => ['created', 'waiting_for_resource', 'preparing', 'pending', 'running'].includes(
+                    pipeline.status));
+            this.pipelines = [...this.pipelines, ...filter];
+            const nextPage = value.headers.get('X-Next-Page');
+            if (nextPage) {
+                this.gatherRunningPipelines(projectId, nextPage);
+            }
+            console.log(this.pipelines);
         });
     }
-
 
     getLoadData(): void {
         this.projects = [];
@@ -78,5 +85,11 @@ export class AppComponent implements OnInit {
             localStorage.setItem('groupId', String(this.groupId));
             this.gatherGroupProjects();
         }
+    }
+
+    calcRuntime(updatedAt: any, createdAt: any): number {
+        const updated = new Date(updatedAt);
+        const created = new Date(createdAt);
+        return (updated.getTime() - created.getTime()) / (1000 * 60) % 60;
     }
 }

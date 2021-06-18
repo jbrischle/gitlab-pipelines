@@ -18,9 +18,10 @@ export class GitlabService {
         });
     }
 
-    public getRunningPipelinesOfProject(backendUrl: string = '', apiKey: string = '', projectId: string = ''): Observable<any> {
+    public getRunningPipelinesOfProject(backendUrl: string = '', apiKey: string = '', projectId: string = '',
+                                        page: string = '1'): Observable<any> {
         const headers: HttpHeaders = new HttpHeaders().set('PRIVATE-TOKEN', apiKey);
-        return this.http.get<any>(backendUrl + `projects/` + projectId + `/pipelines?status=running`, {
+        return this.http.get<any>(backendUrl + `projects/` + projectId + `/pipelines?per_page=100&page=` + page, {
             headers,
             observe: 'response'
         });

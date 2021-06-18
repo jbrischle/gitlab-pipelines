@@ -14,10 +14,17 @@
         <mat-form-field class="input" appearance="standard">
             <mat-label>Gitlab api key</mat-label>
             <input matInput type="password" [(ngModel)]="gitlabApiKey">
+            <mat-hint>
+                <a target="_blank" href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html">Get my
+                    token</a>
+            </mat-hint>
         </mat-form-field>
         <mat-form-field class="input" appearance="standard">
             <mat-label>Gitlab api url</mat-label>
             <input matInput type="text" [(ngModel)]="gitlabUrl">
+            <mat-hint>
+                https://gitlab.example.com/api/v4/
+            </mat-hint>
         </mat-form-field>
         <button class="input" mat-flat-button color="primary" (click)="getLoadData()">Go</button>
     </div>
@@ -63,7 +70,7 @@
         <ng-container matColumnDef="web_url">
             <th mat-header-cell *matHeaderCellDef> Url</th>
             <td mat-cell *matCellDef="let element">
-                <a target="_blank" href="{{element.web_url}}">{{element.web_url}}</a>.
+                <a target="_blank" href="{{element.web_url}}">{{element.web_url}}</a>
             </td>
         </ng-container>
 

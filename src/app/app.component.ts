@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
     gitlabApiKey: string | undefined;
     gitlabUrl: string | undefined;
     groupId: string | undefined;
-    displayedColumns: string[] = ['id', 'status', 'ref', 'created_at', 'updated_at', 'runtime', 'web_url'];
+    displayedColumns: string[] = ['status', 'ref', 'created_at', 'updated_at', 'runtime', 'web_url'];
     @ViewChild(MatTable) table: MatTable<any> | undefined;
 
     constructor(private readonly gitlab: GitlabService) {

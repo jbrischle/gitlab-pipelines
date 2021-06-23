@@ -1,6 +1,7 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {GitlabService} from './gitlab.service';
-import {MatTable} from '@angular/material/table';
+import {MatTableDataSource} from '@angular/material/table';
+import {MatSort} from '@angular/material/sort';
 
 @Component({
                selector:    'app-root',
@@ -19,9 +20,11 @@ export class AppComponent implements OnInit {
     gitlabUrl: string | undefined;
     groupId: string | undefined;
     displayedColumns: string[] = ['status', 'ref', 'created_at', 'updated_at', 'runtime', 'web_url'];
-    @ViewChild(MatTable) table: MatTable<any> | undefined;
+    @ViewChild(MatSort) sort: MatSort | undefined;
+    dataSource = new MatTableDataSource(this.pipelines);
 
-    constructor(private readonly gitlab: GitlabService) {
+    constructor(private readonly gitlab: GitlabService,
+                private changeDetectorRefs: ChangeDetectorRef) {
     }
 
     ngOnInit(): void {
@@ -65,6 +68,7 @@ export class AppComponent implements OnInit {
         this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId).subscribe(value => {
             value.body.forEach((pipeline: { [x: string]: string; }) => pipeline.projectName = projectName);
             this.pipelines = this.pipelines.concat(value.body);
+            this.refreshMatTableDataSource();
         });
     }
 
@@ -88,6 +92,15 @@ export class AppComponent implements OnInit {
         const updated = new Date(updatedAt);
         const created = new Date(createdAt);
         return (updated.getTime() - created.getTime()) / (1000 * 60) % 60;
+    }
+
+    private refreshMatTableDataSource(): void {
+        this.dataSource = new MatTableDataSource(this.pipelines);
+        if (this.sort) {
+            this.sort.sort({id: 'web_url', start: 'desc', disableClear: false});
+            this.dataSource.sort = this.sort;
+        }
+        this.changeDetectorRefs.detectChanges();
     }
 
 }

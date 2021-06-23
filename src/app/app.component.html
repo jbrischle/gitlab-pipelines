@@ -42,38 +42,38 @@
     <br>
     <br>
 
-    <table [dataSource]="pipelines" class="mat-elevation-z8 demo-table" mat-table>
+    <table [dataSource]="dataSource" class="mat-elevation-z8 demo-table" mat-table matSort>
         <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef> Status</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> Status</th>
             <td mat-cell *matCellDef="let element"> {{element.status}} </td>
         </ng-container>
 
         <ng-container matColumnDef="ref">
-            <th mat-header-cell *matHeaderCellDef> Ref</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> Ref</th>
             <td mat-cell *matCellDef="let element"> {{element.ref}} </td>
         </ng-container>
 
+        <ng-container matColumnDef="web_url">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> Url</th>
+            <td *matCellDef="let element" mat-cell>
+                <a href="{{element.web_url}}" target="_blank">{{element.projectName}}</a>
+            </td>
+        </ng-container>
+
         <ng-container matColumnDef="created_at">
-            <th mat-header-cell *matHeaderCellDef> Created at</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> Created at</th>
             <td mat-cell *matCellDef="let element"> {{element.created_at | date:'short'}}  </td>
         </ng-container>
 
         <ng-container matColumnDef="updated_at">
-            <th mat-header-cell *matHeaderCellDef> Updated at</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> Updated at</th>
             <td mat-cell *matCellDef="let element"> {{element.updated_at | date:'short'}} </td>
         </ng-container>
 
         <ng-container matColumnDef="runtime">
-            <th mat-header-cell *matHeaderCellDef> Run time (min)</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header> Run time (min)</th>
             <td mat-cell *matCellDef="let element"> {{calcRuntime(element.updated_at, element.created_at) | number:
                 '1.0-3'}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="web_url">
-            <th mat-header-cell *matHeaderCellDef> Url</th>
-            <td mat-cell *matCellDef="let element">
-                <a href="{{element.web_url}}" target="_blank">{{element.projectName}}</a>
-            </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

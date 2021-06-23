@@ -11,6 +11,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatTableModule} from '@angular/material/table';
 import {MatCardModule} from '@angular/material/card';
 import {MatSelectModule} from '@angular/material/select';
+import {MatSortModule} from '@angular/material/sort';
 
 @NgModule({
               declarations: [
@@ -27,6 +28,7 @@ import {MatSelectModule} from '@angular/material/select';
                   MatTableModule,
                   MatCardModule,
                   MatSelectModule,
+                  MatSortModule,
               ],
               providers:    [],
               bootstrap:    [AppComponent]

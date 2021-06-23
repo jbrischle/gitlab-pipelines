@@ -13,7 +13,7 @@ export class GitlabService {
     public getProjectsByGroup(backendUrl: string = '', apiKey: string = '', groupId: string = '', page: string): Observable<any> {
         const headers: HttpHeaders = new HttpHeaders().set('PRIVATE-TOKEN', apiKey);
         return this.http.get<any>(
-            backendUrl + `groups/` + groupId + `/projects?archived=false&include_subgroups=true&per_page=100&page=` + page, {
+            backendUrl + `groups/` + groupId + `/projects?archived=false&include_subgroups=true&page=` + page, {
                 headers,
                 observe: 'response'
             });

@@ -12,10 +12,10 @@ export class AppComponent implements OnInit {
     title = 'gitlab-pipelines';
     pipelines: any[] = [];
     projects: any[] = [];
-    totalNumberOfItems = 0;
+    projectsTotalNumber = 0;
+    projectsCurrentLoaded = 0;
     pageCurrent = 0;
     pageTotal = 0;
-    loadedItems = 0;
     gitlabApiKey: string | undefined;
     gitlabUrl: string | undefined;
     groupId: string | undefined;
@@ -53,14 +53,14 @@ export class AppComponent implements OnInit {
             if (nextPage) {
                 this.gatherGroupProjects(nextPage);
             }
-            this.loadedItems = this.projects.length;
-            this.totalNumberOfItems = (value.headers.get('x-total'));
+            this.projectsCurrentLoaded = this.projects.length;
+            this.projectsTotalNumber = (value.headers.get('x-total'));
             this.pageCurrent = (value.headers.get('x-page'));
             this.pageTotal = (value.headers.get('x-total-pages'));
             value.body.forEach((project: {
-                name: string;
+                path_with_namespace: string;
                 id: string;
-            }) => this.gatherRunningPipelines(project.id, project.name));
+            }) => this.gatherRunningPipelines(project.id, project.path_with_namespace));
         });
     }
 
@@ -75,10 +75,10 @@ export class AppComponent implements OnInit {
     getLoadData(): void {
         this.projects = [];
         this.pipelines = [];
-        this.totalNumberOfItems = 0;
+        this.projectsTotalNumber = 0;
         this.pageCurrent = 0;
         this.pageTotal = 0;
-        this.loadedItems = 0;
+        this.projectsCurrentLoaded = 0;
 
         if (this.gitlabUrl && this.gitlabApiKey && this.groupId) {
             localStorage.setItem('gitlabApiKey', this.gitlabApiKey);

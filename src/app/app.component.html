@@ -31,16 +31,26 @@
 </div>
 
 <div class="content" role="main">
-    <mat-card>
-        <p>Total number accessible projects: {{totalNumberOfItems}}</p>
-        <p>Number loaded projects: {{loadedItems}}</p>
-        <p>Pages in total: {{pageTotal}}</p>
-        <p>Current page: {{pageCurrent}}</p>
-    </mat-card>
+    <div class="row">
+        <mat-card>
+            <p>Total number accessible projects: {{totalNumberOfItems}}</p>
+            <p>Number loaded projects: {{loadedItems}}</p>
+            <p>Pages in total: {{pageTotal}}</p>
+            <p>Current page: {{pageCurrent}}</p>
+        </mat-card>
+        <mat-card>
+            <mat-form-field appearance="fill">
+                <mat-label>Pipeline status</mat-label>
+                <mat-select [(value)]="statusSelected" (selectionChange)="changeTableContent()">
+                    <mat-option [value]="option" *ngFor="let option of statusList">{{ option }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-card>
+    </div>
     <br>
     <br>
 
-    <table mat-table [dataSource]="pipelines" class="mat-elevation-z8 demo-table">
+    <table mat-table [dataSource]="pipelinesShown" class="mat-elevation-z8 demo-table">
         <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef> Status</th>
             <td mat-cell *matCellDef="let element"> {{element.status}} </td>

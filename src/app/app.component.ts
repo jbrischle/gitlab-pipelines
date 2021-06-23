@@ -9,6 +9,7 @@ import {GitlabService} from './gitlab.service';
 export class AppComponent implements OnInit {
     title = 'gitlab-pipelines';
     pipelines: any[] = [];
+    pipelinesShown: any[] = [];
     projects: any[] = [];
     totalNumberOfItems = 0;
     pageCurrent = 0;
@@ -18,6 +19,9 @@ export class AppComponent implements OnInit {
     gitlabUrl: string | undefined;
     groupId: string | undefined;
     displayedColumns: string[] = ['status', 'ref', 'created_at', 'updated_at', 'runtime', 'web_url'];
+    statusList: any[] = ['created', 'waiting_for_resource', 'preparing', 'pending', 'running', 'success', 'failed', 'canceled', 'skipped',
+                         'manual', 'scheduled'];
+    statusSelected = 'running';
 
     constructor(private readonly gitlab: GitlabService) {
     }
@@ -47,6 +51,8 @@ export class AppComponent implements OnInit {
             const nextPage = value.headers.get('X-Next-Page');
             if (nextPage) {
                 this.gatherGroupProjects(nextPage);
+            } else {
+                console.log(this.projects);
             }
             this.loadedItems = this.projects.length;
             this.totalNumberOfItems = (value.headers.get('x-total'));
@@ -59,15 +65,13 @@ export class AppComponent implements OnInit {
 
     gatherRunningPipelines(projectId: string, page: string = '1'): void {
         this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId, page).subscribe(value => {
-            const filter = value.body.filter(
-                (pipeline: { status: string; }) => ['created', 'waiting_for_resource', 'preparing', 'pending', 'running'].includes(
-                    pipeline.status));
-            this.pipelines = [...this.pipelines, ...filter];
+            this.pipelines = [...this.pipelines, ...value.body];
             const nextPage = value.headers.get('X-Next-Page');
             if (nextPage) {
                 this.gatherRunningPipelines(projectId, nextPage);
+            } else {
+                this.changeTableContent();
             }
-            console.log(this.pipelines);
         });
     }
 
@@ -92,4 +96,12 @@ export class AppComponent implements OnInit {
         const created = new Date(createdAt);
         return (updated.getTime() - created.getTime()) / (1000 * 60) % 60;
     }
+
+    changeTableContent(): void {
+        this.pipelinesShown = this.pipelines.filter(
+            (pipeline: {
+                status: string;
+            }) => this.statusSelected === pipeline.status);
+    }
+
 }

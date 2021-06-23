@@ -1,5 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {GitlabService} from './gitlab.service';
+import {MatTable} from '@angular/material/table';
 
 @Component({
                selector:    'app-root',
@@ -9,7 +10,6 @@ import {GitlabService} from './gitlab.service';
 export class AppComponent implements OnInit {
     title = 'gitlab-pipelines';
     pipelines: any[] = [];
-    pipelinesShown: any[] = [];
     projects: any[] = [];
     totalNumberOfItems = 0;
     pageCurrent = 0;
@@ -18,10 +18,8 @@ export class AppComponent implements OnInit {
     gitlabApiKey: string | undefined;
     gitlabUrl: string | undefined;
     groupId: string | undefined;
-    displayedColumns: string[] = ['status', 'ref', 'created_at', 'updated_at', 'runtime', 'web_url'];
-    statusList: any[] = ['created', 'waiting_for_resource', 'preparing', 'pending', 'running', 'success', 'failed', 'canceled', 'skipped',
-                         'manual', 'scheduled'];
-    statusSelected = 'running';
+    displayedColumns: string[] = ['id', 'status', 'ref', 'created_at', 'updated_at', 'runtime', 'web_url'];
+    @ViewChild(MatTable) table: MatTable<any> | undefined;
 
     constructor(private readonly gitlab: GitlabService) {
     }
@@ -47,31 +45,26 @@ export class AppComponent implements OnInit {
 
     gatherGroupProjects(page: string = '1'): void {
         this.gitlab.getProjectsByGroup(this.gitlabUrl, this.gitlabApiKey, this.groupId, page).subscribe(value => {
-            this.projects = [...this.projects, ...value.body];
+            this.projects = this.projects.concat(value.body);
             const nextPage = value.headers.get('X-Next-Page');
             if (nextPage) {
                 this.gatherGroupProjects(nextPage);
-            } else {
-                console.log(this.projects);
             }
             this.loadedItems = this.projects.length;
             this.totalNumberOfItems = (value.headers.get('x-total'));
             this.pageCurrent = (value.headers.get('x-page'));
             this.pageTotal = (value.headers.get('x-total-pages'));
-
-            value.body.forEach((project: { id: string; }) => this.gatherRunningPipelines(project.id));
+            value.body.forEach((project: {
+                name: string;
+                id: string;
+            }) => this.gatherRunningPipelines(project.id, project.name));
         });
     }
 
-    gatherRunningPipelines(projectId: string, page: string = '1'): void {
-        this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId, page).subscribe(value => {
-            this.pipelines = [...this.pipelines, ...value.body];
-            const nextPage = value.headers.get('X-Next-Page');
-            if (nextPage) {
-                this.gatherRunningPipelines(projectId, nextPage);
-            } else {
-                this.changeTableContent();
-            }
+    gatherRunningPipelines(projectId: string, projectName: string): void {
+        this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId).subscribe(value => {
+            value.body.forEach((pipeline: { [x: string]: string; }) => pipeline.projectName = projectName);
+            this.pipelines = this.pipelines.concat(value.body);
         });
     }
 
@@ -95,13 +88,6 @@ export class AppComponent implements OnInit {
         const updated = new Date(updatedAt);
         const created = new Date(createdAt);
         return (updated.getTime() - created.getTime()) / (1000 * 60) % 60;
-    }
-
-    changeTableContent(): void {
-        this.pipelinesShown = this.pipelines.filter(
-            (pipeline: {
-                status: string;
-            }) => this.statusSelected === pipeline.status);
     }
 
 }

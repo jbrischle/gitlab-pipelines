@@ -12,16 +12,16 @@ export class GitlabService {
 
     public getProjectsByGroup(backendUrl: string = '', apiKey: string = '', groupId: string = '', page: string): Observable<any> {
         const headers: HttpHeaders = new HttpHeaders().set('PRIVATE-TOKEN', apiKey);
-        return this.http.get<any>(backendUrl + `groups/` + groupId + `/projects?include_subgroups=true&per_page=100&page=` + page, {
-            headers,
-            observe: 'response'
-        });
+        return this.http.get<any>(
+            backendUrl + `groups/` + groupId + `/projects?archived=false&include_subgroups=true&per_page=100&page=` + page, {
+                headers,
+                observe: 'response'
+            });
     }
 
-    public getRunningPipelinesOfProject(backendUrl: string = '', apiKey: string = '', projectId: string = '',
-                                        page: string = '1'): Observable<any> {
+    public getRunningPipelinesOfProject(backendUrl: string = '', apiKey: string = '', projectId: string = ''): Observable<any> {
         const headers: HttpHeaders = new HttpHeaders().set('PRIVATE-TOKEN', apiKey);
-        return this.http.get<any>(backendUrl + `projects/` + projectId + `/pipelines?per_page=100&page=` + page, {
+        return this.http.get<any>(backendUrl + `projects/` + projectId + `/pipelines?scope=branches`, {
             headers,
             observe: 'response'
         });

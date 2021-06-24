@@ -37,12 +37,14 @@
 }
 
 .content {
-  display: flex;
+  display: inline-flex;
   margin: 82px auto 32px;
   padding: 0 16px;
   max-width: 1420px;
-  flex-direction: column;
-  align-items: center;
+}
+
+.info {
+  height: fit-content;
 }
 
 .row {

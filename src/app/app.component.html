@@ -6,6 +6,11 @@
     />
     <span>Welcome</span>
     <div class="spacer"></div>
+    <div>
+        <p>No. accessible projects: {{projectsCurrentLoaded}} / {{projectsTotalNumber}}</p>
+        <p>No. loaded Pipelines: {{pipelines.length}}</p>
+    </div>
+    <div class="spacer"></div>
     <div class="inputs">
         <mat-form-field class="input" appearance="standard">
             <mat-label>Gitlab group id</mat-label>
@@ -31,17 +36,6 @@
 </div>
 
 <div class="content" role="main">
-    <div class="row">
-        <mat-card class="info">
-            <p>Total number accessible projects: {{projectsTotalNumber}}</p>
-            <p>Number loaded projects: {{projectsCurrentLoaded}}</p>
-            <p>Pages in total: {{pageTotal}}</p>
-            <p>Current page: {{pageCurrent}}</p>
-            <p>Pipelines loaded: {{pipelines.length}}</p>
-        </mat-card>
-    </div>
-    <br>
-    <br>
 
     <table [dataSource]="dataSource" class="mat-elevation-z8 demo-table" mat-table matSort>
         <ng-container matColumnDef="status">

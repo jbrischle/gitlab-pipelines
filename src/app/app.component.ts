@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
     gitlabApiKey: string | undefined;
     gitlabUrl: string | undefined;
     groupId: string | undefined;
-    displayedColumns: string[] = ['status', 'ref', 'created_at', 'updated_at', 'runtime', 'web_url'];
+    displayedColumns: string[] = ['status', 'ref', 'web_url', 'created_at', 'updated_at', 'runtime'];
     @ViewChild(MatSort) sort: MatSort | undefined;
     dataSource = new MatTableDataSource(this.pipelines);
 

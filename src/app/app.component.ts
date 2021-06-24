@@ -97,7 +97,7 @@ export class AppComponent implements OnInit {
     private refreshMatTableDataSource(): void {
         this.dataSource = new MatTableDataSource(this.pipelines);
         if (this.sort) {
-            this.sort.sort({id: 'web_url', start: 'desc', disableClear: false});
+            this.sort.sort({id: 'status', start: 'desc', disableClear: false});
             this.dataSource.sort = this.sort;
         }
         this.changeDetectorRefs.detectChanges();

@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
     gatherRunningPipelines(projectId: string, projectName: string): void {
         this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId).subscribe(value => {
             value.body.forEach((pipeline: { [x: string]: string; }) => pipeline.projectName = projectName);
-            this.pipelines = this.pipelines.concat(value.body);
+            this.pipelines = this.pipelines.concat(this.calcRuntime2(value.body));
             this.refreshMatTableDataSource();
         });
     }
@@ -88,10 +88,13 @@ export class AppComponent implements OnInit {
         }
     }
 
-    calcRuntime(updatedAt: any, createdAt: any): number {
-        const updated = new Date(updatedAt);
-        const created = new Date(createdAt);
-        return (updated.getTime() - created.getTime()) / (1000 * 60) % 60;
+    calcRuntime2(pipelines: any): any {
+        pipelines.forEach((pipeline: { updated_at: string | number | Date; created_at: string | number | Date; runtime: number; }) => {
+            const updated = new Date(pipeline.updated_at);
+            const created = new Date(pipeline.created_at);
+            pipeline.runtime = (updated.getTime() - created.getTime()) / (1000 * 60) % 60;
+        });
+        return pipelines;
     }
 
     private refreshMatTableDataSource(): void {

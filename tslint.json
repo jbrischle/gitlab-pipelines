@@ -148,14 +148,12 @@
       true,
       "attribute",
       "app",
-      "pim",
       "camelCase"
     ],
     "component-selector": [
       true,
       "element",
       "app",
-      "pim",
       "kebab-case"
     ]
   }

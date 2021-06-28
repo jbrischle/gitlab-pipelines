@@ -67,7 +67,7 @@
 
         <ng-container matColumnDef="runtime">
             <th *matHeaderCellDef mat-header-cell mat-sort-header> Run time (min)</th>
-            <td mat-cell *matCellDef="let element"> {{calcRuntime(element.updated_at, element.created_at) | number:
+            <td *matCellDef="let element" mat-cell> {{element.runtime | number:
                 '1.0-3'}} </td>
         </ng-container>
 

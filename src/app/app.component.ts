@@ -1,7 +1,7 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {GitlabService} from './gitlab.service';
-import {MatTableDataSource} from '@angular/material/table';
-import {MatSort} from '@angular/material/sort';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { GitlabService } from './gitlab.service';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
                selector:    'app-root',
@@ -21,6 +21,8 @@ export class AppComponent implements OnInit {
     groupId: string | undefined;
     displayedColumns: string[] = ['status', 'ref', 'web_url', 'created_at', 'updated_at', 'runtime'];
     @ViewChild(MatSort) sort: MatSort | undefined;
+    pipelineStatus = new Set().add('any');
+    pipelineStatusSelected: string = '';
     dataSource = new MatTableDataSource(this.pipelines);
 
     constructor(private readonly gitlab: GitlabService,
@@ -31,18 +33,14 @@ export class AppComponent implements OnInit {
         const gitlabApiKey = localStorage.getItem('gitlabApiKey');
         const gitlabUrl = localStorage.getItem('gitlabUrl');
         const groupId = localStorage.getItem('groupId');
-        if (gitlabApiKey) {
-            this.gitlabApiKey = gitlabApiKey;
-        }
-        if (gitlabUrl) {
-            this.gitlabUrl = gitlabUrl;
-        }
-        if (groupId) {
-            this.groupId = groupId;
-        }
+        const pipelineStatusSelected = localStorage.getItem('pipelineStatusSelected');
+        gitlabApiKey ? this.gitlabApiKey = gitlabApiKey : null;
+        gitlabUrl ? this.gitlabUrl = gitlabUrl : null;
+        groupId ? this.groupId = groupId : null;
+        pipelineStatusSelected ? this.pipelineStatusSelected = pipelineStatusSelected : null;
 
         if (this.gitlabUrl && this.gitlabApiKey && this.groupId) {
-            this.getLoadData();
+            this.startLoadingData();
         }
     }
 
@@ -66,13 +64,16 @@ export class AppComponent implements OnInit {
 
     gatherRunningPipelines(projectId: string, projectName: string): void {
         this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId).subscribe(value => {
-            value.body.forEach((pipeline: { [x: string]: string; }) => pipeline.projectName = projectName);
+            value.body.forEach((pipeline: { [x: string]: string; }) => {
+                pipeline.projectName = projectName;
+                this.pipelineStatus.add(pipeline.status);
+            });
             this.pipelines = this.pipelines.concat(this.calcRuntime2(value.body));
             this.refreshMatTableDataSource();
         });
     }
 
-    getLoadData(): void {
+    startLoadingData(): void {
         this.projects = [];
         this.pipelines = [];
         this.projectsTotalNumber = 0;
@@ -97,8 +98,19 @@ export class AppComponent implements OnInit {
         return pipelines;
     }
 
+    filterTable() {
+        if (this.pipelineStatusSelected === 'any') {
+            this.dataSource.filter = '';
+            localStorage.setItem('pipelineStatusSelected', '');
+        } else {
+            localStorage.setItem('pipelineStatusSelected', this.pipelineStatusSelected);
+            this.dataSource.filter = this.pipelineStatusSelected;
+        }
+    }
+
     private refreshMatTableDataSource(): void {
         this.dataSource = new MatTableDataSource(this.pipelines);
+        this.dataSource.filter = this.pipelineStatusSelected;
         if (this.sort) {
             this.sort.sort({id: 'status', start: 'desc', disableClear: false});
             this.dataSource.sort = this.sort;

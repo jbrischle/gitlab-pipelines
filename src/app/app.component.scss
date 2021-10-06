@@ -5,61 +5,73 @@
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
-.spacer {
-  flex: 1;
-}
-
-.toolbar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  display: flex;
-  align-items: center;
+.header {
   background-color: #333;
   color: white;
-  font-weight: 600;
+  padding: 1.1rem;
+  display: flex;
+  justify-content: space-between;
+
+  .input {
+    padding-right: 1.5rem;
+  }
+
+  .general {
+    display: flex;
+    justify-content: center;
+  }
 }
 
-.toolbar img {
-  margin: 0 16px;
-}
-
-.toolbar .inputs {
-  margin: 0 40px;
-}
-
-.input {
-  padding-right: 20px;
-}
 
 .content {
+  padding-top: 20px;
   display: flex;
-  margin: 82px auto 32px;
-  padding: 0 16px;
-  max-width: 1420px;
-  flex-direction: column;
-}
+  margin: 1.5rem;
+  justify-content: center;
 
-.row {
-  display: flex;
-}
+  .row {
+    display: flex;
+  }
 
-.pipline-failed {
-  background-color: indianred;
-}
+  .pipline-failed {
+    background-color: indianred;
+  }
 
-.mat-header-cell {
-  padding-left: 20px;
-  padding-right: 20px;
-}
+  .mat-header-cell {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
 
-.mat-cell {
-  padding-left: 25px;
-  padding-right: 25px;
+  .mat-cell {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+
+  .filter {
+    position: fixed;
+    right: 1.5rem;
+    top: 10rem;
+    z-index: 999;
+
+    .mat-radio-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mat-radio-button {
+      margin: 5px;
+    }
+  }
+
+  .info {
+    position: fixed;
+    left: 1.5rem;
+    top: 10rem;
+    z-index: 999;
+  }
 }
 
 a {
@@ -77,3 +89,4 @@ a:hover {
 a:active {
   color: white;
 }
+

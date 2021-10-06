@@ -1,17 +1,17 @@
-<div class="toolbar" role="banner">
-    <img
-            width="40"
-            alt="Janick Avatar"
-            src="assets/janick_avatar.png"
-    />
-    <span>Welcome</span>
-    <div class="spacer"></div>
-    <div>
-        <p>No. accessible projects: {{projectsCurrentLoaded}} / {{projectsTotalNumber}}</p>
-        <p>No. loaded Pipelines: {{pipelines.length}}</p>
+<header class="header">
+    <div class="general">
+        <a href="https://github.com/jbrischle/gitlab-pipelines"
+           rel="noopener noreferrer"
+           target="_blank" title="Github repository for this project called gitlab-pipelines. By jbrischle">
+            <img
+                    alt="jbrischle github repo for gitlab-pipelines"
+                    src="assets/GitHub-Icon-White-Logo.wine.svg"
+                    width="100"
+            />
+        </a>
+
     </div>
-    <div class="spacer"></div>
-    <div class="inputs">
+    <div>
         <mat-form-field class="input" appearance="standard">
             <mat-label>Gitlab group id</mat-label>
             <input matInput type="text" [(ngModel)]="groupId">
@@ -31,11 +31,18 @@
                 https://gitlab.example.com/api/v4/
             </mat-hint>
         </mat-form-field>
-        <button class="input" mat-flat-button color="primary" (click)="getLoadData()">Go</button>
+        <button (click)="startLoadingData()" class="input" color="primary" mat-flat-button>Go</button>
     </div>
-</div>
+</header>
 
-<div class="content" role="main">
+<div class="content">
+
+    <div class="info">
+        <mat-card>
+            <p>No. accessible projects: {{projectsCurrentLoaded}} / {{projectsTotalNumber}}</p>
+            <p>No. loaded Pipelines: {{pipelines.length}}</p>
+        </mat-card>
+    </div>
 
     <table [dataSource]="dataSource" class="mat-elevation-z8 demo-table" mat-table matSort>
         <ng-container matColumnDef="status">
@@ -71,8 +78,20 @@
                 '1.0-3'}} </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
         <tr *matRowDef="let row; columns: displayedColumns;" [class.pipline-failed]='row.status === "failed"'
             mat-row></tr>
     </table>
+
+    <div class="filter">
+        <mat-card>
+            <label>Pipeline status</label>
+            <mat-radio-group (ngModelChange)="filterTable()"
+                             [(ngModel)]="pipelineStatusSelected">
+                <mat-radio-button *ngFor="let status of pipelineStatus" [value]="status">
+                    {{status}}
+                </mat-radio-button>
+            </mat-radio-group>
+        </mat-card>
+    </div>
 </div>

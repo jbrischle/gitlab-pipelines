@@ -70,7 +70,6 @@ export class AppComponent implements OnInit {
                 this.pipelineStatus.add(pipeline.status);
                 this.branchesPerPipelineStatus[pipeline.status] = this.branchesPerPipelineStatus[pipeline.status]
                                                                   ? this.branchesPerPipelineStatus[pipeline.status] + 1 : 1;
-                console.log(this.branchesPerPipelineStatus);
             });
             this.pipelines = this.pipelines.concat(this.calcRuntime2(value.body));
             this.refreshMatTableDataSource();

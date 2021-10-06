@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
               declarations: [
@@ -33,6 +34,7 @@ import { MatRadioModule } from '@angular/material/radio';
                   MatSortModule,
                   MatIconModule,
                   MatRadioModule,
+                  MatDividerModule,
               ],
               providers:    [],
               bootstrap:    [AppComponent]

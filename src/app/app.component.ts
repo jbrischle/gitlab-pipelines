@@ -14,6 +14,7 @@ export class AppComponent implements OnInit {
     projects: any[] = [];
     projectsTotalNumber = 0;
     projectsCurrentLoaded = 0;
+    branchesPerPipelineStatus: any = {};
     pageCurrent = 0;
     pageTotal = 0;
     gitlabApiKey: string | undefined;
@@ -67,6 +68,9 @@ export class AppComponent implements OnInit {
             value.body.forEach((pipeline: { [x: string]: string; }) => {
                 pipeline.projectName = projectName;
                 this.pipelineStatus.add(pipeline.status);
+                this.branchesPerPipelineStatus[pipeline.status] = this.branchesPerPipelineStatus[pipeline.status]
+                                                                  ? this.branchesPerPipelineStatus[pipeline.status] + 1 : 1;
+                console.log(this.branchesPerPipelineStatus);
             });
             this.pipelines = this.pipelines.concat(this.calcRuntime2(value.body));
             this.refreshMatTableDataSource();

@@ -41,6 +41,9 @@
         <mat-card>
             <p>No. accessible projects: {{projectsCurrentLoaded}} / {{projectsTotalNumber}}</p>
             <p>No. loaded Pipelines: {{pipelines.length}}</p>
+            <p *ngFor="let status of branchesPerPipelineStatus | keyvalue">
+                No. pipelines {{status.key}}: {{status.value}}
+            </p>
         </mat-card>
     </div>
 

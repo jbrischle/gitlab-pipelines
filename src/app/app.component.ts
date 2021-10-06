@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
     projects: any[] = [];
     projectsTotalNumber = 0;
     projectsCurrentLoaded = 0;
-    branchesPerPipelineStatus: any = {};
+    noOfPipelinesPerStatus: any = {};
     pageCurrent = 0;
     pageTotal = 0;
     gitlabApiKey: string | undefined;
@@ -68,8 +68,8 @@ export class AppComponent implements OnInit {
             value.body.forEach((pipeline: { [x: string]: string; }) => {
                 pipeline.projectName = projectName;
                 this.pipelineStatus.add(pipeline.status);
-                this.branchesPerPipelineStatus[pipeline.status] = this.branchesPerPipelineStatus[pipeline.status]
-                                                                  ? this.branchesPerPipelineStatus[pipeline.status] + 1 : 1;
+                this.noOfPipelinesPerStatus[pipeline.status] = this.noOfPipelinesPerStatus[pipeline.status]
+                                                               ? this.noOfPipelinesPerStatus[pipeline.status] + 1 : 1;
             });
             this.pipelines = this.pipelines.concat(this.calcRuntime2(value.body));
             this.refreshMatTableDataSource();
@@ -83,6 +83,7 @@ export class AppComponent implements OnInit {
         this.pageCurrent = 0;
         this.pageTotal = 0;
         this.projectsCurrentLoaded = 0;
+        this.noOfPipelinesPerStatus = {};
 
         if (this.gitlabUrl && this.gitlabApiKey && this.groupId) {
             localStorage.setItem('gitlabApiKey', this.gitlabApiKey);

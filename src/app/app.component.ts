@@ -46,7 +46,6 @@ export class AppComponent implements OnInit {
     }
 
     filterTable(): void {
-        console.log(this.pipelineStatusSelected);
         if (this.pipelineStatusSelected === this.CONSTANT_ANY) {
             this.dataSource.filter = ''.trim().toLocaleLowerCase();
         } else {

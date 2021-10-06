@@ -89,9 +89,9 @@
     <div class="filter">
         <mat-card>
             <label>Pipeline status</label>
-            <mat-radio-group (ngModelChange)="filterTable()"
-                             [(ngModel)]="pipelineStatusSelected">
-                <mat-radio-button *ngFor="let status of pipelineStatus" [value]="status">
+            <mat-radio-group (change)="filterTable()" [(ngModel)]="pipelineStatusSelected">
+                <mat-radio-button *ngFor="let status of pipelineStatus"
+                                  [value]="status">
                     {{status}}
                 </mat-radio-button>
             </mat-radio-group>

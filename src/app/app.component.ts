@@ -9,7 +9,7 @@ import { MatSort } from '@angular/material/sort';
                styleUrls:   ['./app.component.scss']
            })
 export class AppComponent implements OnInit {
-    title = 'gitlab-pipelines';
+    private readonly CONSTANT_ANY = 'any';
     pipelines: any[] = [];
     projects: any[] = [];
     projectsTotalNumber = 0;
@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
     groupId: string | undefined;
     displayedColumns: string[] = ['status', 'ref', 'web_url', 'created_at', 'updated_at', 'runtime'];
     @ViewChild(MatSort) sort: MatSort | undefined;
-    pipelineStatus = new Set().add('any');
+    pipelineStatus = new Set().add(this.CONSTANT_ANY);
     pipelineStatusSelected = '';
     dataSource = new MatTableDataSource(this.pipelines);
 
@@ -45,7 +45,18 @@ export class AppComponent implements OnInit {
         }
     }
 
-    gatherGroupProjects(page: string = '1'): void {
+    filterTable(): void {
+        console.log(this.pipelineStatusSelected);
+        if (this.pipelineStatusSelected === this.CONSTANT_ANY) {
+            this.dataSource.filter = ''.trim().toLocaleLowerCase();
+        } else {
+            this.dataSource.filter = this.pipelineStatusSelected.trim().toLocaleLowerCase();
+        }
+        localStorage.setItem('pipelineStatusSelected', this.pipelineStatusSelected);
+
+    }
+
+    private gatherGroupProjects(page: string = '1'): void {
         this.gitlab.getProjectsByGroup(this.gitlabUrl, this.gitlabApiKey, this.groupId, page).subscribe(value => {
             this.projects = this.projects.concat(value.body);
             const nextPage = value.headers.get('X-Next-Page');
@@ -60,19 +71,6 @@ export class AppComponent implements OnInit {
                 path_with_namespace: string;
                 id: string;
             }) => this.gatherRunningPipelines(project.id, project.path_with_namespace));
-        });
-    }
-
-    gatherRunningPipelines(projectId: string, projectName: string): void {
-        this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId).subscribe(value => {
-            value.body.forEach((pipeline: { [x: string]: string; }) => {
-                pipeline.projectName = projectName;
-                this.pipelineStatus.add(pipeline.status);
-                this.noOfPipelinesPerStatus[pipeline.status] = this.noOfPipelinesPerStatus[pipeline.status]
-                                                               ? this.noOfPipelinesPerStatus[pipeline.status] + 1 : 1;
-            });
-            this.pipelines = this.pipelines.concat(this.calcRuntime2(value.body));
-            this.refreshMatTableDataSource();
         });
     }
 
@@ -93,7 +91,20 @@ export class AppComponent implements OnInit {
         }
     }
 
-    calcRuntime2(pipelines: any): any {
+    private gatherRunningPipelines(projectId: string, projectName: string): void {
+        this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId).subscribe(value => {
+            value.body.forEach((pipeline: { [x: string]: string; }) => {
+                pipeline.projectName = projectName;
+                this.pipelineStatus.add(pipeline.status);
+                this.noOfPipelinesPerStatus[pipeline.status] = this.noOfPipelinesPerStatus[pipeline.status]
+                                                               ? this.noOfPipelinesPerStatus[pipeline.status] + 1 : 1;
+            });
+            this.pipelines = this.pipelines.concat(this.calcRuntime2(value.body));
+            this.refreshMatTableDataSource();
+        });
+    }
+
+    private calcRuntime2(pipelines: any): any {
         pipelines.forEach((pipeline: { updated_at: string | number | Date; created_at: string | number | Date; runtime: number; }) => {
             const updated = new Date(pipeline.updated_at);
             const created = new Date(pipeline.created_at);
@@ -102,19 +113,9 @@ export class AppComponent implements OnInit {
         return pipelines;
     }
 
-    filterTable(): void {
-        if (this.pipelineStatusSelected === 'any') {
-            this.dataSource.filter = '';
-            localStorage.setItem('pipelineStatusSelected', '');
-        } else {
-            localStorage.setItem('pipelineStatusSelected', this.pipelineStatusSelected);
-            this.dataSource.filter = this.pipelineStatusSelected;
-        }
-    }
-
     private refreshMatTableDataSource(): void {
         this.dataSource = new MatTableDataSource(this.pipelines);
-        this.dataSource.filter = this.pipelineStatusSelected;
+        this.dataSource.filter = this.pipelineStatusSelected !== this.CONSTANT_ANY ? this.pipelineStatusSelected : '';
         if (this.sort) {
             this.sort.sort({id: 'status', start: 'desc', disableClear: false});
             this.dataSource.sort = this.sort;

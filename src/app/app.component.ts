@@ -116,7 +116,7 @@ export class AppComponent implements OnInit {
         this.dataSource = new MatTableDataSource(this.pipelines);
         this.dataSource.filter = this.pipelineStatusSelected !== this.CONSTANT_ANY ? this.pipelineStatusSelected : '';
         if (this.sort) {
-            this.sort.sort({id: 'status', start: 'desc', disableClear: false});
+            this.sort.sort({id: 'created_at', start: 'desc', disableClear: false});
             this.dataSource.sort = this.sort;
         }
         this.changeDetectorRefs.detectChanges();

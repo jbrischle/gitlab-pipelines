@@ -1,16 +1,10 @@
 {
-  "extends": [
-      "config:base"
-  ],
-  "packageRules": [
+    "extends": ["config:base", ":disableDependencyDashboard"],
+    "packageRules": [
       {
-          "matchUpdateTypes": [
-              "minor",
-              "patch",
-              "pin",
-              "digest"
-          ],
-          "automerge": true
+        "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+        "automerge": true
       }
-  ]
-}
+    ]
+  }
+  

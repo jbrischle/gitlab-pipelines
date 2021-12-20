@@ -28,7 +28,7 @@
     "@angular-devkit/build-angular": "12.2.14",
     "@angular/cli": "12.2.14",
     "@angular/compiler-cli": "12.2.15",
-    "@types/node": "16.11.14",
+    "@types/node": "16.11.15",
     "codelyzer": "6.0.2",
     "protractor": "7.0.0",
     "ts-node": "10.4.0",

@@ -1,5 +1,5 @@
 <header class="header">
-    <div class="general">
+    <div class="header__general">
         <a href="https://github.com/jbrischle/gitlab-pipelines"
            rel="noopener noreferrer"
            target="_blank" title="Github repository for this project called gitlab-pipelines. By jbrischle">
@@ -9,86 +9,42 @@
                     width="100"
             />
         </a>
-
     </div>
-    <div>
-        <mat-form-field class="input" appearance="standard">
+
+    <div class="header__inputs">
+        <mat-form-field appearance="outline">
             <mat-label>Gitlab group id</mat-label>
-            <input matInput type="text" [(ngModel)]="groupId">
+            <input [(ngModel)]="groupId" matInput type="text">
         </mat-form-field>
-        <mat-form-field class="input" appearance="standard">
+        <mat-form-field appearance="outline">
             <mat-label>Gitlab api key</mat-label>
-            <input matInput type="password" [(ngModel)]="gitlabApiKey">
+            <input [(ngModel)]="gitlabApiKey" matInput type="password">
             <mat-hint>
-                <a target="_blank" href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html">Get my
-                    token</a>
+                <a href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html" target="_blank">
+                    Get my token</a>
             </mat-hint>
         </mat-form-field>
-        <mat-form-field class="input" appearance="standard">
+        <mat-form-field appearance="outline">
             <mat-label>Gitlab api url</mat-label>
-            <input matInput type="text" [(ngModel)]="gitlabUrl">
-            <mat-hint>
-                https://gitlab.example.com/api/v4/
-            </mat-hint>
+            <input [(ngModel)]="gitlabUrl" matInput type="text">
+            <mat-hint>https://gitlab.example.com/api/v4/</mat-hint>
         </mat-form-field>
         <button (click)="startLoadingData()" class="input" color="primary" mat-flat-button>Go</button>
     </div>
 </header>
 
 <div class="content">
-
-    <div class="info">
-        <mat-card>
+    <div class="content__info">
+        <mat-card class="info__card">
             <p>No. accessible projects: {{projectsCurrentLoaded}} / {{projectsTotalNumber}}</p>
             <p>No. loaded Pipelines: {{pipelines.length}}</p>
             <p *ngFor="let status of noOfPipelinesPerStatus | keyvalue">
-                No. pipelines {{status.key}}: {{status.value}}
+                No. pipelines <strong>{{status.key}}</strong>: {{status.value}}
             </p>
-        </mat-card>
-    </div>
 
-    <table [dataSource]="dataSource" class="mat-elevation-z8 demo-table" mat-table matSort>
-        <ng-container matColumnDef="status">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> Status</th>
-            <td mat-cell *matCellDef="let element"> {{element.status}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="ref">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> Ref</th>
-            <td mat-cell *matCellDef="let element"> {{element.ref}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="web_url">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> Url</th>
-            <td *matCellDef="let element" mat-cell>
-                <a href="{{element.web_url}}" target="_blank">{{element.projectName}}</a>
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="created_at">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> Created at</th>
-            <td mat-cell *matCellDef="let element"> {{element.created_at | date:'short'}}  </td>
-        </ng-container>
-
-        <ng-container matColumnDef="updated_at">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> Updated at</th>
-            <td mat-cell *matCellDef="let element"> {{element.updated_at | date:'short'}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="runtime">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header> Run time (min)</th>
-            <td *matCellDef="let element" mat-cell> {{element.runtime | number:
-                '1.0-3'}} </td>
-        </ng-container>
-
-        <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-        <tr *matRowDef="let row; columns: displayedColumns;" [class.pipline-failed]='row.status === "failed"'
-            mat-row></tr>
-    </table>
-
-    <div class="filter">
-        <mat-card>
-            <label>Pipeline status</label>
+            <mat-divider></mat-divider>
+            <br>
+            <label>Filter by status:</label>
             <mat-radio-group (change)="filterTable()" [(ngModel)]="pipelineStatusSelected">
                 <mat-radio-button *ngFor="let status of pipelineStatus"
                                   [value]="status">
@@ -96,5 +52,57 @@
                 </mat-radio-button>
             </mat-radio-group>
         </mat-card>
+    </div>
+
+    <div class="content__table">
+        <table [dataSource]="dataSource" class="mat-elevation-z8 demo-table" mat-table matSort>
+            <ng-container matColumnDef="status">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>STATUS</th>
+                <td *matCellDef="let element" mat-cell>
+                    <div class="status">
+                        <ng-container [ngSwitch]="element.status">
+                            <mat-icon *ngSwitchCase="'success'" class="green" fontIcon="check_circle"></mat-icon>
+                            <mat-icon *ngSwitchCase="'failed'" class="red" fontIcon="error"></mat-icon>
+                            <mat-icon *ngSwitchCase="'running'" class="blue" fontIcon="incomplete_circle"></mat-icon>
+                            <mat-icon *ngSwitchCase="'pending'" class="orange" fontIcon="pending"></mat-icon>
+                            <mat-icon *ngSwitchCase="'canceled'" fontIcon="stop_circle"></mat-icon>
+                        </ng-container>
+                        {{element.status}}
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="ref">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>REF</th>
+                <td *matCellDef="let element" mat-cell> {{element.ref}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="web_url">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>URL</th>
+                <td *matCellDef="let element" mat-cell>
+                    <a href="{{element.web_url}}" target="_blank">{{element.projectName}}</a>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="created_at">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>CREATED AT</th>
+                <td *matCellDef="let element" mat-cell> {{element.created_at | date:'short'}}  </td>
+            </ng-container>
+
+            <ng-container matColumnDef="updated_at">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>UPDATED AT</th>
+                <td *matCellDef="let element" mat-cell> {{element.updated_at | date:'short'}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="runtime">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>RUN TIME (MIN)</th>
+                <td *matCellDef="let element" mat-cell> {{element.runtime | number:
+                    '1.0-3'}} </td>
+            </ng-container>
+
+            <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumns;" [class.pipline-failed]='row.status === "failed"'
+                mat-row></tr>
+        </table>
     </div>
 </div>

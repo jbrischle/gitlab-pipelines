@@ -9,7 +9,7 @@ import { MatSort } from '@angular/material/sort';
                styleUrls:   ['./app.component.scss']
            })
 export class AppComponent implements OnInit {
-    private readonly CONSTANT_ANY = 'any';
+    title = 'gitlab-pipelines';
     pipelines: any[] = [];
     projects: any[] = [];
     projectsTotalNumber = 0;
@@ -22,9 +22,10 @@ export class AppComponent implements OnInit {
     groupId: string | undefined;
     displayedColumns: string[] = ['status', 'ref', 'web_url', 'created_at', 'updated_at', 'runtime'];
     @ViewChild(MatSort) sort: MatSort | undefined;
-    pipelineStatus = new Set().add(this.CONSTANT_ANY);
     pipelineStatusSelected = '';
     dataSource = new MatTableDataSource(this.pipelines);
+    private readonly CONSTANT_ANY = 'any';
+    pipelineStatus = new Set().add(this.CONSTANT_ANY);
 
     constructor(private readonly gitlab: GitlabService,
                 private changeDetectorRefs: ChangeDetectorRef) {
@@ -55,6 +56,23 @@ export class AppComponent implements OnInit {
 
     }
 
+    startLoadingData(): void {
+        this.projects = [];
+        this.pipelines = [];
+        this.projectsTotalNumber = 0;
+        this.pageCurrent = 0;
+        this.pageTotal = 0;
+        this.projectsCurrentLoaded = 0;
+        this.noOfPipelinesPerStatus = {};
+
+        if (this.gitlabUrl && this.gitlabApiKey && this.groupId) {
+            localStorage.setItem('gitlabApiKey', this.gitlabApiKey);
+            localStorage.setItem('gitlabUrl', this.gitlabUrl);
+            localStorage.setItem('groupId', String(this.groupId));
+            this.gatherGroupProjects();
+        }
+    }
+
     private gatherGroupProjects(page: string = '1'): void {
         this.gitlab.getProjectsByGroup(this.gitlabUrl, this.gitlabApiKey, this.groupId, page).subscribe(value => {
             this.projects = this.projects.concat(value.body);
@@ -73,34 +91,18 @@ export class AppComponent implements OnInit {
         });
     }
 
-    startLoadingData(): void {
-        this.projects = [];
-        this.pipelines = [];
-        this.projectsTotalNumber = 0;
-        this.pageCurrent = 0;
-        this.pageTotal = 0;
-        this.projectsCurrentLoaded = 0;
-        this.noOfPipelinesPerStatus = {};
-
-        if (this.gitlabUrl && this.gitlabApiKey && this.groupId) {
-            localStorage.setItem('gitlabApiKey', this.gitlabApiKey);
-            localStorage.setItem('gitlabUrl', this.gitlabUrl);
-            localStorage.setItem('groupId', String(this.groupId));
-            this.gatherGroupProjects();
-        }
-    }
-
     private gatherRunningPipelines(projectId: string, projectName: string): void {
-        this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId).subscribe(value => {
-            value.body.forEach((pipeline: { [x: string]: string; }) => {
-                pipeline.projectName = projectName;
-                this.pipelineStatus.add(pipeline.status);
-                this.noOfPipelinesPerStatus[pipeline.status] = this.noOfPipelinesPerStatus[pipeline.status]
-                                                               ? this.noOfPipelinesPerStatus[pipeline.status] + 1 : 1;
+        this.gitlab.getRunningPipelinesOfProject(this.gitlabUrl, this.gitlabApiKey, projectId)
+            .subscribe(value => {
+                value.body.forEach((pipeline: { [x: string]: string; }) => {
+                    pipeline['projectName'] = projectName;
+                    this.pipelineStatus.add(pipeline['status']);
+                    this.noOfPipelinesPerStatus[pipeline['status']] = this.noOfPipelinesPerStatus[pipeline['status']]
+                                                                      ? this.noOfPipelinesPerStatus[pipeline['status']] + 1 : 1;
+                });
+                this.pipelines = this.pipelines.concat(this.calcRuntime2(value.body));
+                this.refreshMatTableDataSource();
             });
-            this.pipelines = this.pipelines.concat(this.calcRuntime2(value.body));
-            this.refreshMatTableDataSource();
-        });
     }
 
     private calcRuntime2(pipelines: any): any {
